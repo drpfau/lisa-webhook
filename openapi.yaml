@@ -36,21 +36,28 @@ components:
         TYPE:
           type: string
           enum: [EVENT]
+          example: EVENT
         MID:
           type: string
           format: guid
+          example: b9682433-79bc-4b9b-a333-e149e6d071f2
         CREATED:
           type: string
           format: date-time
+          example: 2018-03-01T10:27:45.000Z
         ID:
           type: string
+          example: 4711
         EVENT:
           type: string
+          example: Burglary
         TEXT:
           type: string
+          example: Burglary Sensor Backdoor 2b
         URL:
           type: string
           format: uri
+          example: http://videosystem.example.com/?video=sGhnZ6gG
     States:
       required:
       - name
@@ -60,24 +67,33 @@ components:
         TYPE:
           type: string
           enum: [LINESTATE]
+          example: LINESTATE
         MID:
           type: string
           format: guid
+          example: b9682433-79bc-4b9b-a333-e149e6d071f3          
         CREATED:
           type: string
           format: date-time
+          example: 2018-03-01T10:27:45.000Z
         ID:
           type: string
+          example: 4712
         MODULE:
           type: integer
+          example: 0
         LINE: 
           type: integer
+          example: 3
         STATE:
           type: integer
           enum: [0,1]
           description: 0 default, 1 active
+          example: 1
         TEXT:
           type: string
+          example: Burglary Sensor Backdoor 2b
         URL:
           type: string
-          format: uri      
+          format: uri
+          example: http://videosystem.example.com/?video=sGhnZ6gG      
