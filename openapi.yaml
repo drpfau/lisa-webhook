@@ -1,0 +1,83 @@
+openapi: 3.0.1
+info:
+  title: LISA Webhook
+  description: 'LISA Webhook for Events and States'
+  contact:
+    email: info@pfau.de
+  version: 1.0.0
+servers:
+- url: http://lisa.example.com:{port}/
+paths:
+  /:
+    post:
+      summary: Add an Event or State to LISA
+      requestBody:
+        description: Add an Event or State to LISA
+        content:
+          application/json:
+            schema:
+              oneOf:
+              -  $ref: '#/components/schemas/Events'
+              -  $ref: '#/components/schemas/States'
+        required: true
+      responses:
+        200:
+          description: ok
+          content: {}
+        405:
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    Events:
+      type: object
+      properties:
+        TYPE:
+          type: string
+          enum: [EVENT]
+        MID:
+          type: string
+          format: guid
+        CREATED:
+          type: string
+          format: date-time
+        ID:
+          type: string
+        EVENT:
+          type: string
+        TEXT:
+          type: string
+        URL:
+          type: string
+          format: uri
+    States:
+      required:
+      - name
+      - photoUrls
+      type: object
+      properties:
+        TYPE:
+          type: string
+          enum: [LINESTATE]
+        MID:
+          type: string
+          format: guid
+        CREATED:
+          type: string
+          format: date-time
+        ID:
+          type: string
+        MODULE:
+          type: integer
+        LINE: 
+          type: integer
+        STATE:
+          type: integer
+          enum: [0,1]
+          description: 0 default, 1 active
+        TEXT:
+          type: string
+        URL:
+          type: string
+          format: uri      
