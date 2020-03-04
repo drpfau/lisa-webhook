@@ -6,7 +6,7 @@ info:
     email: info@pfau.de
   version: 1.0.0
 servers:
-- url: http://lisa.example.com:{port}/
+- url: http://lisa.example.com:{port}/lisa/1.0.0/alarmhook/
 paths:
   /:
     post:
