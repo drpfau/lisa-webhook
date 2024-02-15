@@ -4,13 +4,23 @@ info:
   description: 'LISA Webhook for Events and States'
   contact:
     email: info@pfau.de
-  version: 1.0.0
+  version: 2.0.0
 servers:
-- url: http://lisa.example.com:{port}/lisa/1.0.0/alarmhook/
+- url: '{protocol}://{host}:{port}/'
+  variables:
+    protocol:
+      enum:
+        - http
+        - https
+      default: http
+    host:
+      default: lisaapi.leitstellensoftware.de
+    port:
+      default: '16123'
 paths:
-  /:
+  /events:
     post:
-      summary: Add an Event or State to LISA
+      summary: Add an Event or State to LISA (JSON)
       requestBody:
         description: Add an Event or State to LISA
         content:
@@ -21,15 +31,105 @@ paths:
               -  $ref: '#/components/schemas/States'
         required: true
       responses:
-        200:
-          description: ok
+        202:
+          description: accepted
           content: {}
-        405:
+        403:
           description: Invalid input
           content: {}
-      x-codegen-request-body-name: body
+  /ev/event/{ObjectNumber}/{event}:
+    post:
+      summary: Post a simple event to a specific Object, identified by an ObjectNumber
+      parameters:
+        - name: ObjectNumber
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Object Identifier in LISA  
+        - name: event  
+          in: path
+          required: true
+          schema:
+            type: string
+          description: LISA-Event  
+      requestBody:
+        description: Free text
+        content:
+          text/plain:
+            schema: 
+              $ref: '#/components/schemas/Simple'
+      responses:
+        202:
+          description: accepted
+          content: {}
+        403:
+          description: Invalid input
+          content: {}  
+  /ev/oevent/{oid}/{event}:
+    post:
+      summary: Post a simple event to a specific Object, identified by an OID
+      parameters:
+        - name: oid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Technical (internal) ObjectID in LISA
+        - name: event  
+          in: path
+          required: true
+          schema:
+            type: string
+          description: LISA-Event  
+      requestBody:
+        description: Free text
+        content:
+          text/plain:
+            schema: 
+              $ref: '#/components/schemas/Simple'
+      responses:
+        202:
+          description: accepted
+          content: {}
+        403:
+          description: Invalid input
+          content: {}
+  /ev/device/{id}/{event}:
+    post:
+      summary: Post a simple event to a specific device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a device
+        - name: event  
+          in: path
+          required: true
+          schema:
+            type: string
+          description: LISA-Event  
+      requestBody:
+        description: Free text
+        content:
+          text/plain:
+            schema: 
+              $ref: '#/components/schemas/Simple'
+      responses:
+        202:
+          description: accepted
+          content: {}
+        403:
+          description: Invalid input
+          content: {}             
 components:
   schemas:
+    Simple:
+      type: string
+      description: Message Body for Simple Event
+      example: Burglary Alert Backkdoor
     Events:
       type: object
       properties:
@@ -41,6 +141,7 @@ components:
           type: string
           format: guid
           example: b9682433-79bc-4b9b-a333-e149e6d071f2
+          description: Create a new GUID for every new Message
         CREATED:
           type: string
           format: date-time
@@ -48,6 +149,7 @@ components:
         ID:
           type: string
           example: 4711
+          description: Device ID
         EVENT:
           type: string
           example: Burglary
@@ -58,6 +160,19 @@ components:
           type: string
           format: uri
           example: http://videosystem.example.com/?video=sGhnZ6gG
+        GEOTIME:   
+          type: string
+          format: date-time
+          example: 2018-03-01T10:27:45.000Z
+        GEOPOSLAT:
+          type: number
+          example: 47.78013
+        GEOPOSLONG:
+          type: number
+          example: 9.19910
+        additionalData:
+          type: object
+          description: Object for additional data
     States:
       required:
       - name
@@ -71,7 +186,8 @@ components:
         MID:
           type: string
           format: guid
-          example: b9682433-79bc-4b9b-a333-e149e6d071f3          
+          example: b9682433-79bc-4b9b-a333-e149e6d071f3
+          description: Create a new GUID for every new Message
         CREATED:
           type: string
           format: date-time
@@ -79,6 +195,7 @@ components:
         ID:
           type: string
           example: 4712
+          description: Device ID
         MODULE:
           type: integer
           example: 0
@@ -96,4 +213,23 @@ components:
         URL:
           type: string
           format: uri
-          example: http://videosystem.example.com/?video=sGhnZ6gG      
+          example: http://videosystem.example.com/?video=sGhnZ6gG  
+        GEOTIME:   
+          type: string
+          format: date-time
+          example: 2018-03-01T10:27:45.000Z
+        GEOPOSLAT:
+          type: number
+          example: 47.78013
+        GEOPOSLONG:
+          type: number
+          example: 9.19910
+        additionalData:
+          type: object
+          description: Object for additional data          
+  securitySchemes:
+    basicAuth:     
+      type: http
+      scheme: basic
+security:
+  - basicAuth: []  

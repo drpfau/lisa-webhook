@@ -1,3 +1,3 @@
 # LISA Webhook
 
-LISA Webhook for Events and States
+LISA Webhooks for Simple Events and JSON-Event and JSON-State messages
